@@ -1,0 +1,56 @@
+﻿<Window x:Class="TestWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        xmlns:local="clr-namespace:TestWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Ellipse Name="lamp" Width="30" Height="30" Fill="Red" 
+                 Margin="600,0,100,217" VerticalAlignment="Bottom" />
+
+        <Button x:Name="Start_Button" Content="Start" HorizontalAlignment="Left" 
+                Margin="332,311,0,0" VerticalAlignment="Top" 
+                Width="145" Height="50" FontSize="24" Click="Start_Button_Click"/>
+
+        <Menu x:Name="Menu" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <MenuItem Header="МЕНЮ" Width="100" Height="30" FontSize="14">
+
+                <Button x:Name="Sound" Content="ВКЛ/ВЫКЛ Звук" HorizontalAlignment="Left" Click="Sound_Click"></Button>
+                <Button x:Name="Music" Content="ВКЛ/ВЫКЛ Музыка" HorizontalAlignment="Left" Click="Music_Click"></Button>
+
+                <MenuItem x:Name="Menu_Server" Header="Адрес сервера">
+                    <TextBox x:Name="Menu_Server_Address"></TextBox>
+                </MenuItem>
+                <MenuItem x:Name="Menu_Port" Header="Адрес порта">
+                    <TextBox x:Name="Menu_Port_Address"></TextBox>
+                </MenuItem>
+                <MenuItem x:Name="Menu_Video" Header="Адрес видеопотока">
+                    <TextBox x:Name="Menu_Video_Address"></TextBox>
+                </MenuItem>
+
+                <Slider x:Name="Menu_Volume" HorizontalAlignment="Left" 
+                        Value="0" Minimum="0" Maximum="100" SelectionStart="0" Height="30" 
+                        IsSelectionRangeEnabled="True" ValueChanged="Menu_Volume_ValueChanged"
+                        Orientation="Horizontal" TickPlacement="BottomRight" TickFrequency="10"></Slider>
+            </MenuItem>
+        </Menu>
+
+        <CheckBox Content="CheckBox" HorizontalAlignment="Left" 
+                  Margin="696,98,0,0" VerticalAlignment="Top"/>
+
+        <TextBlock x:Name="OdometerTextBlock" HorizontalAlignment="Center" Width="100" Height="30" 
+                   Margin="0,17,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+
+        <vlc:VideoView x:Name="videoView" Width="150" Height="150" Margin="325,67,325,217"/>
+
+        <StackPanel Orientation="Vertical" Margin="300,222,300,130">
+            <Button x:Name="btnStart" Content="Start" Click="btnStart_Click" Margin="5"/>
+            <Button x:Name="btnStop" Content="Stop" Click="btnStop_Click" Margin="5"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
