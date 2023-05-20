@@ -21,10 +21,9 @@ namespace TestWPF
 
         private VLCStreamingClient streamingClient;
 
-        private ConnectionManager connectionManager;
-        private DispatcherTimer timer;
-
         string? url;
+
+        private OdometerWebSocketClient websocketClient;
 
         public MainWindow()
         {
@@ -39,16 +38,9 @@ namespace TestWPF
             streamingClient.StreamingSoundDetected += StreamingClient_StreamingSoundDetected;
             streamingClient.StreamingSilent += StreamingClient_StreamingSilent;
 
-            connectionManager = new ConnectionManager(url);
-            connectionManager.ConnectionStatusChanged += ConnectionManager_ConnectionStatusChanged;
-            connectionManager.OdometerUpdated += ConnectionManager_OdometerUpdated;
+            websocketClient = new OdometerWebSocketClient(OdometerTextBlock, lamp, Start_Button, url);
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(10);
-            timer.Tick += Timer_Tick;
-
-            OdometerTextBlock.Text = $"Value: {0}";
-
+            websocketClient.ConnectError += WebsocketClient_ErrorNotification;
         }
 
         private async void Start_Button_Click(object sender, RoutedEventArgs e)
@@ -59,60 +51,15 @@ namespace TestWPF
 
             musicController.Play();
 
-            if (!connectionManager.IsConnected)
+            if (!websocketClient.IsRunning)
             {
-                await ConnectToServer();
+                websocketClient.Start();
             }
         }
 
-        private async Task ConnectToServer()
+        private void WebsocketClient_ErrorNotification(object sender, string errorMessage)
         {
-            while (true)
-            {
-                await connectionManager.Connect();
-
-                if (connectionManager.IsConnected)
-                {
-                    lamp.Fill = Brushes.Green;
-                    timer.Start();
-                    break;
-                }
-                else
-                {
-                    MessageBox.Show("Failed to connect to the server.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    lamp.Fill = Brushes.Red;
-
-                    await Task.Delay(TimeSpan.FromSeconds(5));
-                }
-            }
-        }
-
-        private async void Timer_Tick(object sender, EventArgs e)
-        {
-            // опрос сервера каждые 10 секунд
-            await connectionManager.RequestOdometer();
-        }
-
-        private void ConnectionManager_ConnectionStatusChanged(object sender, bool isConnected)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (isConnected)
-                    lamp.Fill = Brushes.Green;
-                else
-                    lamp.Fill = Brushes.Red;
-            });
-
-
-        }
-
-        private async void ConnectionManager_OdometerUpdated(object sender, float odometer)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                OdometerTextBlock.Text = $"Value: {odometer}";
-               
-            });
+            MessageBox.Show("WebSocket Error: " + errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void Sound_Click(object sender, RoutedEventArgs e)
